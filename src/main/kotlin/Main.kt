@@ -1,5 +1,4 @@
 import java.util.Scanner
-import kotlin.math.pow
 
 /**
  * Interactive Kotlin Command-Line Utility
@@ -15,15 +14,15 @@ import kotlin.math.pow
 fun main() {
     val scanner = Scanner(System.`in`)
     
-    println("=" * 60)
+    println("=".repeat(60))
     println("Interactive Kotlin Command-Line Utility")
-    println("=" * 60)
+    println("=".repeat(60))
     println("\nAvailable Commands:")
     println("  sum         - Calculate sum of cubes (1³ + 2³ + ... + n³)")
     println("  conversion  - Convert temperature between C, K, F")
     println("  factorial   - Calculate sum of factorials")
     println("  exit        - Exit the application")
-    println("=" * 60)
+    println("=".repeat(60))
     
     while (true) {
         print("\nEnter command: ")
@@ -266,9 +265,4 @@ fun calculateFactorial(n: Int): Long {
     return result
 }
 
-/**
- * Extension function to repeat a string (for formatting)
- */
-private operator fun String.times(n: Int): String {
-    return this.repeat(n)
-}
+
