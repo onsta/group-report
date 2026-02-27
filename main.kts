@@ -45,8 +45,8 @@ fun executeCommand(command: Command) {
 println("=== Interactive Kotlin Command-Line Utility ===")
 println("Commands: sum, conversion, factorial, exit\n")
 
-var running = true
-while (running) {
+
+while (true) {
     print("> Enter command: ")
     val input = readlnOrNull()?.trim() ?: break
     val command = Command.fromInput(input)
@@ -58,8 +58,7 @@ while (running) {
 
     if (command == Command.EXIT) {
         executeCommand(command)
-        running = false
-        continue
+        break
     }
 
     try {
