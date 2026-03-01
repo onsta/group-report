@@ -24,25 +24,13 @@ enum class TemperatureUnit(val label: String) {
     }
 }
 
+// --- Command Handler ---
+
 fun executeCommand(command: Command) {
 
     when (command) {
 
-        Command.SUM -> {
-            println("Enter a natural number:")
-            val n = readln().toIntOrNull()
-                ?: throw IllegalArgumentException("Invalid number.")
-
-            if (n < 1)
-                throw IllegalArgumentException("Number must be positive.")
-
-            var total = 0L
-            for (i in 1..n) {
-                total += i * i * i
-            }
-
-            println("Result: $total")
-        }
+        Command.SUM -> throw NotImplementedError("sum not implemented")
 
         Command.CONVERSION -> {
             println("Enter temperature value:")
@@ -57,35 +45,36 @@ fun executeCommand(command: Command) {
             val to = TemperatureUnit.fromInput(readln())
                 ?: throw IllegalArgumentException("Invalid target unit.")
 
-            val result = when (from to to) {
+            val result: Double = when (from to to) {
 
                 TemperatureUnit.CELSIUS to TemperatureUnit.FAHRENHEIT ->
-                    value * 9 / 5 + 32
+                    value * 9.0 / 5.0 + 32.0
 
                 TemperatureUnit.CELSIUS to TemperatureUnit.KELVIN ->
                     value + 273.15
 
                 TemperatureUnit.FAHRENHEIT to TemperatureUnit.CELSIUS ->
-                    (value - 32) * 5 / 9
+                    (value - 32.0) * 5.0 / 9.0
 
                 TemperatureUnit.FAHRENHEIT to TemperatureUnit.KELVIN ->
-                    (value - 32) * 5 / 9 + 273.15
+                    (value - 32.0) * 5.0 / 9.0 + 273.15
 
                 TemperatureUnit.KELVIN to TemperatureUnit.CELSIUS ->
                     value - 273.15
 
                 TemperatureUnit.KELVIN to TemperatureUnit.FAHRENHEIT ->
-                    (value - 273.15) * 9 / 5 + 32
+                    (value - 273.15) * 9.0 / 5.0 + 32.0
 
                 else -> value
             }
 
-            println("Result: $result ${to.label}")
+            println("Result: ${"%.2f".format(result)} ${to.label}")
         }
 
         Command.FACTORIAL -> {
-            fun factorial(n: Int): Long {
-                var result = 1L
+            fun factorial(n: Int): Double {
+                require(n in 0..20) { "Input must be between 0 and 20." }
+                var result = 1.0
                 for (i in 1..n) result *= i
                 return result
             }
@@ -102,17 +91,16 @@ fun executeCommand(command: Command) {
             val n3 = readln().toIntOrNull()
                 ?: throw IllegalArgumentException("Invalid number.")
 
-            if (n1 < 0 || n2 < 0 || n3 < 0)
-                throw IllegalArgumentException("Numbers must be non-negative.")
-
             val total = factorial(n1) + factorial(n2) + factorial(n3)
 
-            println("Result: $total")
+            println("Result: ${"%.2f".format(total)}")
         }
 
         Command.EXIT -> println("Goodbye!")
     }
 }
+
+// --- Main Loop ---
 
 println("=== Interactive Kotlin Command-Line Utility ===")
 println("Commands: sum, conversion, factorial, exit\n")
@@ -127,7 +115,7 @@ while (running) {
     val command = Command.fromInput(input)
 
     if (command == null) {
-        println("Unknown command. Available: sum, conversion, factorial, exit\n")
+        println("Unknown command '$input'. Available: sum, conversion, factorial, exit\n")
         continue
     }
 
@@ -139,6 +127,8 @@ while (running) {
 
     try {
         executeCommand(command)
+    } catch (e: NotImplementedError) {
+        println("This command is not yet implemented.")
     } catch (e: IllegalArgumentException) {
         println("Error: ${e.message}")
     }
