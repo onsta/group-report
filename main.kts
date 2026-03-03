@@ -30,7 +30,30 @@ fun executeCommand(command: Command) {
 
     when (command) {
 
-        Command.SUM -> throw NotImplementedError("sum not implemented")
+        Command.SUM -> {
+        fun sum(n: Int): Int {
+            var result = 0
+            require(n < 1000) {"Risk of overflow - Keep input < 1000"} //If exceeds 1000, risk of overflow
+            if (n == 1) {
+                return 1
+            }
+            for (i in 1..n) {
+                result += i * i * i
+            }
+            return result
+        }
+
+            println("Enter a Positive Integer: ")
+            val input = readln().toIntOrNull()
+
+        if (input == null || input <= 0) {
+            println("Invalid Input")
+        } else {
+            val output = sum(input)
+            println("The sum of the first $input cubes are $output")
+
+        }
+    }
 
         Command.CONVERSION -> {
             println("Enter temperature value:")
