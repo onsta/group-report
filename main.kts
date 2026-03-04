@@ -31,14 +31,10 @@ fun executeCommand(command: Command) {
     when (command) {
 
         Command.SUM -> {
-        fun sum(n: Int): Int {
-            var result = 0
-            require(n < 1000) {"Risk of overflow - Keep input < 1000"} //If exceeds 1000, risk of overflow
-            if (n == 1) {
-                return 1
-            }
+        fun sum(n: Int): Double {
+            var result = 0.0
             for (i in 1..n) {
-                result += i * i * i
+                result += i.toDouble() * i * i
             }
             return result
         }
