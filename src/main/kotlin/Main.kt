@@ -3,7 +3,7 @@ import java.util.Scanner
 /**
  * Interactive Kotlin Command-Line Utility
  * This application processes user inputs to perform calculations and conversions.
- * 
+ *
  * Available Commands:
  * - sum: Calculates 1³ + 2³ + 3³ + ... + n³
  * - conversion: Converts temperature between Celsius, Kelvin, and Fahrenheit
@@ -13,7 +13,7 @@ import java.util.Scanner
 
 fun main() {
     val scanner = Scanner(System.`in`)
-    
+
     println("=".repeat(60))
     println("Interactive Kotlin Command-Line Utility")
     println("=".repeat(60))
@@ -23,17 +23,25 @@ fun main() {
     println("  factorial   - Calculate sum of factorials")
     println("  exit        - Exit the application")
     println("=".repeat(60))
-    
+
     while (true) {
-        print("\nEnter command: ")
-        val input = scanner.nextLine().trim().lowercase()
-        
-        if (input.isEmpty()) {
-            println("Error: Please enter a command.")
+        // Menu-first UX (still accepts command names)
+        println("\nPlease choose an option:")
+        println("1. SUM (sum of cubes)")
+        println("2. CONVERSION (temperature)")
+        println("3. FACTORIAL (sum of factorials)")
+        println("4. EXIT")
+        print("Enter choice (1-4) or command name: ")
+
+        val inputRaw = scanner.nextLine().trim()
+        if (inputRaw.isEmpty()) {
+            println("Error: Please choose an option (1-4) or type a command name.")
             continue
         }
-        
-        when (interpretCommand(input)) {
+
+        val normalized = interpretCommand(inputRaw)
+
+        when (normalized) {
             "exit" -> {
                 println("\nThank you for using the Kotlin Command-Line Utility!")
                 break
@@ -41,24 +49,25 @@ fun main() {
             "sum" -> executeSum(scanner)
             "conversion" -> executeConversion(scanner)
             "factorial" -> executeFactorial(scanner)
-            else -> println("Error: Unknown command '$input'. Please use sum, conversion, factorial, or exit.")
+            else -> println("Error: Invalid selection. Please enter 1-4, or: sum, conversion, factorial, exit.")
         }
     }
-    
+
     scanner.close()
 }
 
 /**
  * Interprets and validates the user command
+ * Accepts both menu numbers (1-4) and command aliases.
  * @param command The user input command
  * @return The normalized command name
  */
 fun interpretCommand(command: String): String {
     return when (command.lowercase().trim()) {
-        "sum" -> "sum"
-        "conversion", "convert", "temp" -> "conversion"
-        "factorial", "fact" -> "factorial"
-        "exit", "quit", "q" -> "exit"
+        "1", "sum" -> "sum"
+        "2", "conversion", "convert", "temp" -> "conversion"
+        "3", "factorial", "fact" -> "factorial"
+        "4", "exit", "quit", "q" -> "exit"
         else -> "unknown"
     }
 }
@@ -70,29 +79,29 @@ fun interpretCommand(command: String): String {
 fun executeSum(scanner: Scanner) {
     println("\n--- Sum of Cubes Calculator ---")
     print("Enter a natural number (n): ")
-    
+
     try {
         val input = scanner.nextLine().trim()
         val n = input.toIntOrNull()
-        
+
         if (n == null) {
             println("Error: Invalid input. Please enter a valid integer.")
             return
         }
-        
+
         if (n <= 0) {
             println("Error: Please enter a natural number (positive integer greater than 0).")
             return
         }
-        
+
         if (n > 10000) {
             println("Error: Number too large. Please enter a number less than or equal to 10000.")
             return
         }
-        
+
         val result = calculateSumOfCubes(n)
         println("Result: 1³ + 2³ + 3³ + ... + $n³ = $result")
-        
+
     } catch (e: Exception) {
         println("Error: An unexpected error occurred - ${e.message}")
     }
@@ -105,7 +114,6 @@ fun executeSum(scanner: Scanner) {
  * @return The sum of cubes
  */
 fun calculateSumOfCubes(n: Int): Long {
-    // Using the mathematical formula: (n*(n+1)/2)²
     val sum = (n.toLong() * (n + 1) / 2)
     return sum * sum
 }
@@ -117,46 +125,46 @@ fun calculateSumOfCubes(n: Int): Long {
 fun executeConversion(scanner: Scanner) {
     println("\n--- Temperature Converter ---")
     print("Enter temperature value: ")
-    
+
     try {
         val tempInput = scanner.nextLine().trim()
         val temperature = tempInput.toDoubleOrNull()
-        
+
         if (temperature == null) {
             println("Error: Invalid temperature value. Please enter a valid number.")
             return
         }
-        
+
         print("Enter source unit (C/K/F): ")
         val sourceUnit = scanner.nextLine().trim().uppercase()
-        
+
         if (sourceUnit !in listOf("C", "K", "F")) {
             println("Error: Invalid source unit. Please enter C (Celsius), K (Kelvin), or F (Fahrenheit).")
             return
         }
-        
+
         print("Enter target unit (C/K/F): ")
         val targetUnit = scanner.nextLine().trim().uppercase()
-        
+
         if (targetUnit !in listOf("C", "K", "F")) {
             println("Error: Invalid target unit. Please enter C (Celsius), K (Kelvin), or F (Fahrenheit).")
             return
         }
-        
+
         if (sourceUnit == targetUnit) {
             println("Result: $temperature°$sourceUnit = $temperature°$targetUnit")
             return
         }
-        
+
         val result = convertTemperature(temperature, sourceUnit, targetUnit)
-        
+
         if (result == null) {
             println("Error: Invalid temperature conversion. Temperature below absolute zero.")
             return
         }
-        
+
         println("Result: $temperature°$sourceUnit = %.2f°$targetUnit".format(result))
-        
+
     } catch (e: Exception) {
         println("Error: An unexpected error occurred - ${e.message}")
     }
@@ -170,7 +178,6 @@ fun executeConversion(scanner: Scanner) {
  * @return The converted temperature or null if invalid
  */
 fun convertTemperature(value: Double, fromUnit: String, toUnit: String): Double? {
-    // First convert to Celsius
     val celsius = when (fromUnit) {
         "C" -> value
         "K" -> {
@@ -180,11 +187,9 @@ fun convertTemperature(value: Double, fromUnit: String, toUnit: String): Double?
         "F" -> (value - 32) * 5.0 / 9.0
         else -> return null
     }
-    
-    // Check for absolute zero violations
+
     if (celsius < -273.15) return null
-    
-    // Then convert from Celsius to target unit
+
     return when (toUnit) {
         "C" -> celsius
         "K" -> celsius + 273.15
@@ -199,52 +204,69 @@ fun convertTemperature(value: Double, fromUnit: String, toUnit: String): Double?
  */
 fun executeFactorial(scanner: Scanner) {
     println("\n--- Sum of Factorials Calculator ---")
-    
+
     try {
+        // ----- n1 -----
         print("Enter first integer (n1): ")
         val n1Input = scanner.nextLine().trim()
         val n1 = n1Input.toIntOrNull()
-        
+
         if (n1 == null) {
             println("Error: Invalid input for n1. Please enter a valid integer.")
             return
         }
-        
+        if (n1 < 0) {
+            println("Error: Factorial is not defined for negative numbers.")
+            return
+        }
+        if (n1 > 20) {
+            println("Error: n1 is too large. Please enter an integer ≤ 20 to avoid overflow.")
+            return
+        }
+
+        // ----- n2 -----
         print("Enter second integer (n2): ")
         val n2Input = scanner.nextLine().trim()
         val n2 = n2Input.toIntOrNull()
-        
+
         if (n2 == null) {
             println("Error: Invalid input for n2. Please enter a valid integer.")
             return
         }
-        
+        if (n2 < 0) {
+            println("Error: Factorial is not defined for negative numbers.")
+            return
+        }
+        if (n2 > 20) {
+            println("Error: n2 is too large. Please enter an integer ≤ 20 to avoid overflow.")
+            return
+        }
+
+        // ----- n3 -----
         print("Enter third integer (n3): ")
         val n3Input = scanner.nextLine().trim()
         val n3 = n3Input.toIntOrNull()
-        
+
         if (n3 == null) {
             println("Error: Invalid input for n3. Please enter a valid integer.")
             return
         }
-        
-        if (n1 < 0 || n2 < 0 || n3 < 0) {
-            println("Error: Factorial is not defined for negative numbers. Please enter non-negative integers.")
+        if (n3 < 0) {
+            println("Error: Factorial is not defined for negative numbers.")
             return
         }
-        
-        if (n1 > 20 || n2 > 20 || n3 > 20) {
-            println("Error: Numbers too large. Please enter integers less than or equal to 20 to avoid overflow.")
+        if (n3 > 20) {
+            println("Error: n3 is too large. Please enter an integer ≤ 20 to avoid overflow.")
             return
         }
-        
+
         val factorial1 = calculateFactorial(n1)
         val factorial2 = calculateFactorial(n2)
         val factorial3 = calculateFactorial(n3)
         val sum = factorial1 + factorial2 + factorial3
-        
+
         println("Result: $n1! + $n2! + $n3! = $factorial1 + $factorial2 + $factorial3 = $sum")
-        
+
     } catch (e: Exception) {
         println("Error: An unexpected error occurred - ${e.message}")
     }
@@ -257,12 +279,10 @@ fun executeFactorial(scanner: Scanner) {
  */
 fun calculateFactorial(n: Int): Long {
     if (n == 0 || n == 1) return 1
-    
+
     var result = 1L
     for (i in 2..n) {
         result *= i
     }
     return result
 }
-
-
