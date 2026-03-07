@@ -24,6 +24,28 @@ enum class TemperatureUnit(val label: String) {
     }
 }
 
+fun factorial(n: Int): Long {
+    require(n in 0..20) { "Number must be non-negative and between 0 and 20." }
+
+    var result = 1L
+    for (i in 1..n) {
+        result *= i
+    }
+    return result
+}
+
+fun readFactorialInput(prompt: String): Int {
+    println(prompt)
+    val n = readln().toIntOrNull()
+        ?: throw IllegalArgumentException("Invalid number.")
+
+    if (n !in 0..20) {
+        throw IllegalArgumentException("Number must be between 0 and 20.")
+    }
+
+    return n
+}
+
 // --- Command Handler ---
 
 fun executeCommand(command: Command) {
@@ -31,25 +53,25 @@ fun executeCommand(command: Command) {
     when (command) {
 
         Command.SUM -> {
-        fun sum(n: Int): Double {
-            var result = 0.0
-            for (i in 1..n) {
-                result += i.toDouble() * i * i
+            fun sum(n: Int): Double {
+                var result = 0.0
+                for (i in 1..n) {
+                    result += i.toDouble() * i * i
+                }
+                return result
             }
-            return result
-        }
 
             println("Enter a Positive Integer: ")
             val input = readln().toIntOrNull()
 
-        if (input == null || input <= 0) {
-            println("Invalid Input")
-        } else {
-            val output = sum(input)
-            println("The sum of the first $input cubes are $output")
+            if (input == null || input <= 0) {
+                println("Invalid Input")
+            } else {
+                val output = sum(input)
+                println("The sum of the first $input cubes are $output")
 
+            }
         }
-    }
 
         Command.CONVERSION -> {
             println("Enter temperature value:")
@@ -91,34 +113,19 @@ fun executeCommand(command: Command) {
         }
 
         Command.FACTORIAL -> {
-            fun factorial(n: Int): Double {
-                require(n in 0..20) { "Input must be between 0 and 20." }
-                var result = 1.0
-                for (i in 1..n) result *= i
-                return result
-            }
-
-            println("Enter first number:")
-            val n1 = readln().toIntOrNull()
-                ?: throw IllegalArgumentException("Invalid number.")
-
-            println("Enter second number:")
-            val n2 = readln().toIntOrNull()
-                ?: throw IllegalArgumentException("Invalid number.")
-
-            println("Enter third number:")
-            val n3 = readln().toIntOrNull()
-                ?: throw IllegalArgumentException("Invalid number.")
+            val n1 = readFactorialInput("Enter first number:")
+            val n2 = readFactorialInput("Enter second number:")
+            val n3 = readFactorialInput("Enter third number:")
 
             val total = factorial(n1) + factorial(n2) + factorial(n3)
-
-            println("Result: ${"%.2f".format(total)}")
+            println("Result: $total")
         }
 
-        Command.EXIT -> println("Goodbye!")
+        Command.EXIT -> {
+            println("Exiting program...")
+        }
     }
 }
-
 // --- Main Loop ---
 
 println("=== Interactive Kotlin Command-Line Utility ===")
