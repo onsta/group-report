@@ -69,7 +69,6 @@ fun executeCommand(command: Command) {
             } else {
                 val output = sum(input)
                 println("The sum of the first $input cubes are $output")
-
             }
         }
 
@@ -109,7 +108,7 @@ fun executeCommand(command: Command) {
                 else -> value
             }
 
-            println("Result: ${"%.2f".format(result)} ${to.label}")
+            println("$value ${from.label} = ${"%.2f".format(result)} ${to.label}")
         }
 
         Command.FACTORIAL -> {
@@ -126,6 +125,7 @@ fun executeCommand(command: Command) {
         }
     }
 }
+
 // --- Main Loop ---
 
 println("=== Interactive Kotlin Command-Line Utility ===")
